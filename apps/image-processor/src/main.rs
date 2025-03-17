@@ -7,6 +7,7 @@ mod global;
 mod management;
 mod worker;
 
+use crate::worker::process::blocking::JobOutput;
 use crate::worker::process::decoder::ffmpeg::FfmpegDecoder;
 use crate::worker::process::decoder::libwebp::WebpDecoder;
 use crate::worker::process::decoder::Decoder;
@@ -33,8 +34,13 @@ fn main() -> Result<(), anyhow::Error> {
 					..Default::default()
 				},
 				OutputFormatOptions {
-					format: OutputFormat::PngStatic as i32,
-					quality: 100,
+					format: OutputFormat::AvifAnim as i32,
+					quality: 90,
+					..Default::default()
+				},
+				OutputFormatOptions {
+					format: OutputFormat::GifAnim as i32,
+					quality: 90,
 					..Default::default()
 				},
 			],
@@ -58,20 +64,28 @@ fn main() -> Result<(), anyhow::Error> {
 	while task.drive().unwrap_or(false) {}
 	let output = task.finish()?;
 
-	let encoded = &output
-		.output
-		.iter()
-		.find(|i| i.format == OutputFormat::WebpAnim)
-		.unwrap()
-		.data;
+	write_encoded_data(&output, OutputFormat::WebpAnim)?;
+	write_encoded_data(&output, OutputFormat::AvifAnim)?;
+	write_encoded_data(&output, OutputFormat::GifAnim)?;
 
-	std::fs::write("out.webp", encoded)?;
-
-	let mut decoder = WebpDecoder::new(&Task { ..Default::default() }, Cow::Borrowed(encoded))?;
-	dbg!(decoder.info().timescale);
-	while let Some(frame) = decoder.decode()? {
-		dbg!(frame.duration_ts);
-	}
+	// let mut decoder = WebpDecoder::new(&Task { ..Default::default() }, Cow::Borrowed(encoded_webp))?;
+	// dbg!(decoder.info().timescale);
+	// while let Some(frame) = decoder.decode()? {
+	// 	dbg!(frame.duration_ts);
+	// }
 
 	Ok(())
+}
+
+fn write_encoded_data(output: &JobOutput, format: OutputFormat) -> std::io::Result<()> {
+	let extension = match format {
+		OutputFormat::WebpAnim => "webp",
+		OutputFormat::AvifAnim => "avif",
+		OutputFormat::GifAnim => "gif",
+		_ => panic!("Unsupported format"), // Handle unsupported formats if necessary
+	};
+	let filename = format!("out.{}", extension);
+
+	let encoded_data = &output.output.iter().find(|i| i.format == format).unwrap().data;
+	std::fs::write(filename, encoded_data)
 }
