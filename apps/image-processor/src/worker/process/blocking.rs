@@ -97,7 +97,7 @@ pub async fn spawn(task: Task, input: Bytes, permit: Arc<OwnedSemaphorePermit>) 
 	.await?
 }
 
-struct BlockingTask<'a> {
+pub struct BlockingTask<'a> {
 	decoder: AnyDecoder<'a>,
 	decoder_info: DecoderInfo,
 	input: InputImage,
@@ -164,7 +164,7 @@ fn build_encoder_set(
 }
 
 impl<'a> BlockingTask<'a> {
-	fn new(task: &'a Task, input: &'a [u8]) -> Result<Self, JobError> {
+	pub fn new(task: &'a Task, input: &'a [u8]) -> Result<Self, JobError> {
 		let output = task.output.as_ref().ok_or(JobError::InvalidJob)?;
 		let anim_config = output.animation_config.as_ref();
 

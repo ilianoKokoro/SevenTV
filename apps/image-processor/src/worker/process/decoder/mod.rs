@@ -8,9 +8,9 @@ use super::frame::FrameRef;
 use super::libavif::AvifError;
 use super::libwebp::WebPError;
 
-mod ffmpeg;
-mod libavif;
-mod libwebp;
+pub mod ffmpeg;
+pub mod libavif;
+pub mod libwebp;
 
 #[derive(Debug, thiserror::Error)]
 pub enum DecoderError {

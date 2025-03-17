@@ -1,4 +1,22 @@
+mod config;
+mod database;
+mod drive;
+mod event_queue;
+pub mod events;
+mod global;
+mod management;
 mod worker;
+
+use crate::worker::process::decoder::ffmpeg::FfmpegDecoder;
+use crate::worker::process::decoder::libwebp::WebpDecoder;
+use crate::worker::process::decoder::Decoder;
+use image_processor_proto::output::Resize;
+use image_processor_proto::IntegerList;
+use image_processor_proto::Output;
+use image_processor_proto::OutputFormat;
+use image_processor_proto::OutputFormatOptions;
+use image_processor_proto::Task;
+use std::borrow::Cow;
 
 fn main() -> Result<(), anyhow::Error> {
 	let args: Vec<String> = std::env::args().collect();

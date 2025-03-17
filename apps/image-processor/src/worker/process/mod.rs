@@ -13,8 +13,8 @@ use crate::database::Job;
 use crate::drive::{Drive, DriveWriteOptions};
 use crate::global::Global;
 
-mod blocking;
-mod decoder;
+pub mod blocking;
+pub mod decoder;
 mod encoder;
 mod frame;
 mod input_download;
