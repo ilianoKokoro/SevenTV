@@ -22,7 +22,7 @@ use std::borrow::Cow;
 fn main() -> Result<(), anyhow::Error> {
 	let args: Vec<String> = std::env::args().collect();
 
-	let data = std::fs::read(&args[1])?;
+	let data: Vec<u8> = std::fs::read(&args[1])?;
 	let mut decoder = FfmpegDecoder::new(&Task { ..Default::default() }, Cow::Borrowed(&data))?;
 
 	let task_info = Task {
