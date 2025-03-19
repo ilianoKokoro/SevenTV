@@ -68,11 +68,11 @@ fn main() -> Result<(), anyhow::Error> {
 	write_encoded_data(&output, OutputFormat::AvifAnim)?;
 	write_encoded_data(&output, OutputFormat::GifAnim)?;
 
-	// let mut decoder = WebpDecoder::new(&Task { ..Default::default() }, Cow::Borrowed(encoded_webp))?;
-	// dbg!(decoder.info().timescale);
-	// while let Some(frame) = decoder.decode()? {
-	// 	dbg!(frame.duration_ts);
-	// }
+	let mut decoder = WebpDecoder::new(&Task { ..Default::default() }, Cow::Borrowed(encoded_webp))?;
+	dbg!(decoder.info().timescale);
+	while let Some(frame) = decoder.decode()? {
+		dbg!(frame.duration_ts);
+	}
 
 	Ok(())
 }
